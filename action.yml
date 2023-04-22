@@ -1,0 +1,84 @@
+name: 'Upgrade provider'
+description: 'An action to upgrade bridged providers'
+inputs:
+  provider-repo:
+    description: Name of provider repo
+    required: true
+    default: ''
+  gh-token:
+    description: gh authentication token
+    required: true
+    default: ''
+  branch:
+    description: The branch to perform the upgrade on (typically should be master/ main)
+    required: true
+    default: main
+  slack-webhook:
+    description: Slack webhook
+    required: false
+  slack-channel:
+    description: The channel name to send Slack updates to
+    required: false
+  git-username:
+    description: git username
+    required: true
+    default: ''
+  git-email:
+    description: git email
+    default: ''
+runs:
+  using: "composite"
+  steps:
+  - name: Install Go
+    uses: actions/setup-go@v3
+    with:
+      go-version: 1.20.1
+  - name: Install pulumictl
+    uses: jaxxstorm/action-install-gh-release@v1.5.0
+    with:
+      repo: pulumi/pulumictl
+  - name: Install Pulumi CLI
+    uses: pulumi/action-install-pulumi-cli@v2
+  - name: Checkout repo
+    uses: actions/checkout@v3
+    with:
+      ref: ${{ inputs.branch }}
+  - name: Install upgrade-provider
+    run: go install github.com/pulumi/upgrade-provider@latest
+    shell: bash
+  - name: Setup Gradle
+    uses: gradle/gradle-build-action@v2
+    with:
+      gradle-version: "7.6"
+  - name: Set up git identity
+    run: git config --global user.name ${{ inputs.git-username }} && git config --global
+      user.email ${{ inputs.git-email }}
+    shell: bash
+  - name: Run upgrade-provider
+    run: upgrade-provider ${{ inputs.provider-repo }} --kind=all
+    shell: bash
+    env:
+      GH_TOKEN: ${{ inputs.gh-token }}
+  - env:
+      SLACK_CHANNEL: ${{ inputs.slack-channel }}
+      SLACK_COLOR: ${{ job.status }}
+      SLACK_MESSAGE: |-
+        Upgrade succeeded :heart_decoration:
+        PR opened at pulumi/${{ inputs.provider-repo }}
+      SLACK_TITLE: ${{ inputs.provider-name }} upgrade result
+      SLACK_USERNAME: provider-bot
+      SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
+    name: Notify success
+    uses: rtCamp/action-slack-notify@v2
+  - env:
+      SLACK_CHANNEL: ${{ inputs.slack-channel }}
+      SLACK_COLOR: ${{ job.status }}
+      SLACK_MESSAGE: |-
+        Upgrade failed :sweat:
+      SLACK_TITLE: ${{ inputs.provider-name }} upgrade result
+      SLACK_USERNAME: provider-bot
+      SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
+      SLACK_ICON_EMOJI: ":taco:"
+    if: ${{ failure() }}
+    name: Notify failure
+    uses: rtCamp/action-slack-notify@v2
