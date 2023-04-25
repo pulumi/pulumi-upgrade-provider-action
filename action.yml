@@ -1,31 +1,12 @@
 name: 'Upgrade provider'
 description: 'An action to upgrade bridged providers'
 inputs:
-  provider-repo:
-    description: Name of provider repo
-    required: true
-    default: ''
-  gh-token:
-    description: gh authentication token
-    required: true
-    default: ''
-  branch:
-    description: The branch to perform the upgrade on (typically should be master/ main)
-    required: true
-    default: main
   slack-webhook:
     description: Slack webhook
     required: false
   slack-channel:
     description: The channel name to send Slack updates to
     required: false
-  git-username:
-    description: git username
-    required: true
-    default: ''
-  git-email:
-    description: git email
-    default: ''
 runs:
   using: "composite"
   steps:
@@ -42,30 +23,30 @@ runs:
   - name: Checkout repo
     uses: actions/checkout@v3
     with:
-      ref: ${{ inputs.branch }}
+      ref: ${{ github.head_ref }}
   - name: Install upgrade-provider
-    run: go install github.com/pulumi/upgrade-provider@2331eb5
+    run: go install github.com/pulumi/upgrade-provider@9e79d2320fc2f3f148476ffe3460a8afa797d9c7
     shell: bash
   - name: Setup Gradle
     uses: gradle/gradle-build-action@v2
     with:
       gradle-version: "7.6"
   - name: Set up git identity
-    run: git config --global user.name ${{ inputs.git-username }} && git config --global
-      user.email ${{ inputs.git-email }}
+    run: git config --global user.name ${{ github.event.pusher.name }} && git config --global
+      user.email ${{ github.event.pusher.email }}
     shell: bash
   - name: Run upgrade-provider
-    run: upgrade-provider ${{ inputs.provider-repo }} --kind=all
+    run: upgrade-provider ${{ github.event.repository.name }} --kind=all
     shell: bash
     env:
-      GH_TOKEN: ${{ inputs.gh-token }}
+      GH_TOKEN: ${{ github.token }}
   - env:
       SLACK_CHANNEL: ${{ inputs.slack-channel }}
       SLACK_COLOR: 	"#00FF00"
       SLACK_MESSAGE: |-
         Upgrade succeeded :heart_decoration:
-        PR opened at github.com/pulumi/${{ inputs.provider-repo }}/pulls
-      SLACK_TITLE: ${{ inputs.provider-name }} upgrade result
+        PR opened at github.com/${{ github.repository }}/pulls
+      SLACK_TITLE: ${{ github.repository.name }} upgrade result
       SLACK_USERNAME: provider-bot
       SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
       SLACK_ICON_EMOJI: ":taco:"
@@ -76,7 +57,7 @@ runs:
       SLACK_COLOR: "#FF0000"
       SLACK_MESSAGE: |-
         Upgrade failed :x:
-      SLACK_TITLE: ${{ inputs.provider-name }} upgrade result
+      SLACK_TITLE: ${{ github.repository.name }} upgrade result
       SLACK_USERNAME: provider-bot
       SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
       SLACK_ICON_EMOJI: ":taco:"
