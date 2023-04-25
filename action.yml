@@ -25,7 +25,7 @@ runs:
     with:
       ref: ${{ github.head_ref }}
   - name: Install upgrade-provider
-    run: go install github.com/pulumi/upgrade-provider@2331eb5
+    run: go install github.com/pulumi/upgrade-provider@9e79d2320fc2f3f148476ffe3460a8afa797d9c7
     shell: bash
   - name: Setup Gradle
     uses: gradle/gradle-build-action@v2
