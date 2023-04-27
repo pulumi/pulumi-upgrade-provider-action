@@ -11,7 +11,9 @@ runs:
   using: "composite"
   steps:
   - name: echo git config
-    run: echo ${{ github.event }} && echo ${{ github.event.issue }} && ${{ github.event.issue.user }} && ${{ github.event.sender }}
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    run: echo "$GITHUB_CONTEXT"
     shell: bash
   - name: Install Go
     uses: actions/setup-go@v3
