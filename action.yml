@@ -23,7 +23,7 @@ runs:
   - name: Checkout repo
     uses: actions/checkout@v3
     with:
-      ref: ${{ github.head_ref }}
+      ref: ${{ github.ref_name }}
   - name: Install upgrade-provider
     run: go install github.com/pulumi/upgrade-provider@9e79d2320fc2f3f148476ffe3460a8afa797d9c7
     shell: bash
