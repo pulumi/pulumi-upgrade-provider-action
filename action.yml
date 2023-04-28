@@ -43,7 +43,7 @@ runs:
     run: upgrade-provider ${{ github.event.repository.name }} --kind=all
     shell: bash
     env:
-      GH_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ env.GH_TOKEN }}
   - env:
       SLACK_CHANNEL: ${{ inputs.slack-channel }}
       SLACK_COLOR: 	"#00FF00"
