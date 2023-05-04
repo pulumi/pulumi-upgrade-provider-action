@@ -7,6 +7,14 @@ inputs:
   slack-channel:
     description: The channel name to send Slack updates to
     required: false
+  kind:
+    description: The kind of upgrade to perform; valid options are ["all", "provider", "bridge"]
+    required: true
+    default: "all"
+  upstream-provider-name:
+    description: The name of the upstream provider
+    required: true
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -40,7 +48,7 @@ runs:
     run: git config --global user.name ${{ github.event.issue.user.login }}
     shell: bash
   - name: Run upgrade-provider
-    run: upgrade-provider ${{ github.event.repository.name }} --kind=all
+    run: upgrade-provider ${{ github.event.repository.name }} --kind=all --upstream-provider-name=${{ inputs.upstream-provider-name }}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
@@ -48,7 +56,7 @@ runs:
       SLACK_CHANNEL: ${{ inputs.slack-channel }}
       SLACK_COLOR: 	"#00FF00"
       SLACK_MESSAGE: |-
-        Upgrade succeeded :heart_decoration:
+        Upgrade succeeded for ${{ github.event.repository.name }}  :heart_decoration:
         PR opened at github.com/${{ github.repository }}/pulls
       SLACK_TITLE: ${{ github.repository.name }} upgrade result
       SLACK_USERNAME: provider-bot
@@ -60,7 +68,7 @@ runs:
       SLACK_CHANNEL: ${{ inputs.slack-channel }}
       SLACK_COLOR: "#FF0000"
       SLACK_MESSAGE: |-
-        Upgrade failed :x:
+        Upgrade failed for ${{ github.event.repository.name }} :x:
       SLACK_TITLE: ${{ github.repository.name }} upgrade result
       SLACK_USERNAME: provider-bot
       SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
