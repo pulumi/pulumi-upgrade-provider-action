@@ -1,12 +1,6 @@
 name: 'Upgrade provider'
 description: 'An action to upgrade bridged providers'
 inputs:
-  slack-webhook:
-    description: Slack webhook
-    required: false
-  slack-channel:
-    description: The channel name to send Slack updates to
-    required: false
   kind:
     description: The kind of upgrade to perform; valid options are ["all", "provider", "bridge"]
     required: true
@@ -52,27 +46,3 @@ runs:
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
-  - env:
-      SLACK_CHANNEL: ${{ inputs.slack-channel }}
-      SLACK_COLOR: 	"#00FF00"
-      SLACK_MESSAGE: |-
-        Upgrade succeeded for ${{ github.event.repository.name }}  :heart_decoration:
-        PR opened at github.com/${{ github.repository }}/pulls
-      SLACK_TITLE: ${{ github.repository.name }} upgrade result
-      SLACK_USERNAME: provider-bot
-      SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
-      SLACK_ICON_EMOJI: ":taco:"
-    name: Notify success
-    uses: rtCamp/action-slack-notify@v2
-  - env:
-      SLACK_CHANNEL: ${{ inputs.slack-channel }}
-      SLACK_COLOR: "#FF0000"
-      SLACK_MESSAGE: |-
-        Upgrade failed for ${{ github.event.repository.name }} :x:
-      SLACK_TITLE: ${{ github.repository.name }} upgrade result
-      SLACK_USERNAME: provider-bot
-      SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
-      SLACK_ICON_EMOJI: ":taco:"
-    if: ${{ failure() }}
-    name: Notify failure
-    uses: rtCamp/action-slack-notify@v2
