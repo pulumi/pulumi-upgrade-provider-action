@@ -30,7 +30,9 @@ runs:
     with:
       gradle-version: "7.6"
   - name: Set up git identity
-    run: git config --global user.name ${{ github.event.issue.user.login }}
+    run: |
+      git config --global user.name ${{ github.event.issue.user.login }}
+      git config --global user.email "<>"
     shell: bash
   - name: Run upgrade-provider
     run: upgrade-provider ${{ github.repository }} --kind=all
