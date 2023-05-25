@@ -5,6 +5,10 @@ inputs:
     description: The kind of upgrade to perform; valid options are ["all", "provider", "bridge"]
     required: true
     default: "all"
+  remove-plugins:
+    description: Whether to remove plugins before running the upgrade process. Recommended to ensure the latest plugin is used to generate examples.
+    required: true
+    default: "false"
 runs:
   using: "composite"
   steps:
@@ -36,7 +40,7 @@ runs:
     run: git config --global user.name ${{ github.event.issue.user.login }}
     shell: bash
   - name: Run upgrade-provider
-    run: upgrade-provider ${{ github.repository }} --kind=all
+    run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }} --remove-plugins=${{ inputs.remove-plugins }}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
