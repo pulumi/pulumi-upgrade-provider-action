@@ -5,6 +5,10 @@ inputs:
     description: The kind of upgrade to perform; valid options are ["all", "provider", "bridge"]
     required: true
     default: "all"
+  username:
+    description: 'The username for git configuration'
+    required: false
+    default: ${{ github.event.issue.user.login }}
 runs:
   using: "composite"
   steps:
@@ -33,7 +37,7 @@ runs:
     with:
       gradle-version: "7.6"
   - name: Set up git identity
-    run: git config --global user.name ${{ github.event.issue.user.login }}
+    run: git config --global user.name '${{ inputs.username }}'
     shell: bash
   - name: Run upgrade-provider
     run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }}
