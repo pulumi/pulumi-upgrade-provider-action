@@ -36,7 +36,7 @@ runs:
     run: git config --global user.name ${{ github.event.issue.user.login }}
     shell: bash
   - name: Run upgrade-provider
-    run: upgrade-provider ${{ github.repository }} --kind=all
+    run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
