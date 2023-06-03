@@ -8,7 +8,7 @@ inputs:
   username:
     description: 'The username for git configuration'
     required: false
-    default: ${{ github.event.issue.user.login }}
+    default: ${{ github.actor }}
 runs:
   using: "composite"
   steps:
