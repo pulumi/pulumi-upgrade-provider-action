@@ -21,7 +21,7 @@ runs:
     with:
       repo: pulumi/pulumictl
   - name: Install Pulumi CLI
-    uses: pulumi/action-install-pulumi-cli@v2
+    uses: pulumi/actions@v4
   - name: Checkout repo
     uses: actions/checkout@v3
     with:
