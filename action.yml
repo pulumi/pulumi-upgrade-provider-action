@@ -39,8 +39,12 @@ runs:
     uses: gradle/gradle-build-action@v2
     with:
       gradle-version: "7.6"
-  - name: Set up git identity
+  - name: "Set up git identity: name"
     run: git config --global user.name '${{ inputs.username }}'
+    shell: bash
+  - name: "Set up git identity: email"
+    if: ${{ inputs.email != '' }}
+    run: git config --global user.email '${{ inputs.email }}'
     shell: bash
   - name: Run upgrade-provider
     run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }}
