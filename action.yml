@@ -9,6 +9,9 @@ inputs:
     description: 'The username for git configuration'
     required: false
     default: ${{ github.actor }}
+  email:
+    description: 'The email for git configuration'
+    required: false
 runs:
   using: "composite"
   steps:
