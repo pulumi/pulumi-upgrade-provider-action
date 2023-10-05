@@ -12,6 +12,10 @@ inputs:
   email:
     description: 'The email for git configuration'
     required: false
+  automerge:
+    description: 'If the created PR should be auto-merged'
+    required: false
+    default: false
 runs:
   using: "composite"
   steps:
@@ -48,6 +52,12 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }}
+    shell: bash
+    env:
+      GH_TOKEN: ${{ env.GH_TOKEN }}
+  - name: Set PR to auto-merge
+    if: ${{ inputs.automerge }}
+    run: gh pr merge --auto --squash --delete-branch
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
