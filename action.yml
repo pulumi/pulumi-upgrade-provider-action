@@ -57,6 +57,9 @@ runs:
       GH_TOKEN: ${{ env.GH_TOKEN }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge }}
+    # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
+    # should be removed when https://github.com/pulumi/home/issues/3140 closes.
+    continue-on-error: true
     run: gh pr merge --auto --squash --delete-branch
     shell: bash
     env:
