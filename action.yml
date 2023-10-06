@@ -12,6 +12,10 @@ inputs:
   email:
     description: 'The email for git configuration'
     required: false
+  automerge:
+    description: 'If the created PR should be auto-merged'
+    required: false
+    default: false
 runs:
   using: "composite"
   steps:
@@ -48,6 +52,15 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }}
+    shell: bash
+    env:
+      GH_TOKEN: ${{ env.GH_TOKEN }}
+  - name: Set PR to auto-merge
+    if: ${{ inputs.automerge }}
+    # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
+    # should be removed when https://github.com/pulumi/home/issues/3140 closes.
+    continue-on-error: true
+    run: gh pr merge --auto --squash --delete-branch
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
