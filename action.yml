@@ -57,10 +57,14 @@ runs:
     run: git config --global user.email '${{ inputs.email }}'
     shell: bash
   - name: Run upgrade-provider
-    run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }} --target-bridge-version=${{ inputs.target-bridge-version }}
+    run: |
+      upgrade-provider "$REPO" --kind="$KIND" --target-bridge-version="$TBV"
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
+      REPO: ${{ github.repository }}
+      KIND: ${{ inputs.kind }}
+      TBV: ${{ inputs.target-bridge-version }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge == 'true' }}
     # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
