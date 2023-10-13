@@ -16,6 +16,12 @@ inputs:
     description: 'If the created PR should be auto-merged'
     required: false
     default: false
+  target-bridge-version:
+    description: |
+      Informs which version of pulumi-terraform-bridge to target for updating the bridge; valid
+      options are "latest", a version like "1.2.3", or a Git commit hash reference like "cad926a2d".
+    required: false
+    default: "latest"
 runs:
   using: "composite"
   steps:
@@ -51,7 +57,7 @@ runs:
     run: git config --global user.email '${{ inputs.email }}'
     shell: bash
   - name: Run upgrade-provider
-    run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }}
+    run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }} --target-bridge-version=${{ inputs.target-bridge-version }}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
