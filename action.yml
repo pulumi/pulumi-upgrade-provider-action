@@ -16,6 +16,16 @@ inputs:
     description: 'If the created PR should be auto-merged'
     required: false
     default: false
+  pr-reviewers:
+    description: |
+      Handles of reviewers to assign the created PRs to. If empty, default reviewers are assigned.
+    required: false
+    default: ""
+  pr-description:
+    description: |
+      Extra description to insert in the auto-generated pull request.
+    required: false
+    default: ""
   target-bridge-version:
     description: |
       Informs which version of pulumi-terraform-bridge to target for updating the bridge; valid
@@ -57,10 +67,16 @@ runs:
     run: git config --global user.email '${{ inputs.email }}'
     shell: bash
   - name: Run upgrade-provider
-    run: upgrade-provider ${{ github.repository }} --kind=${{ inputs.kind }} --target-bridge-version=${{ inputs.target-bridge-version }}
+    run: |
+      upgrade-provider "$REPO" --kind="$KIND" --target-bridge-version="$TBV" --pr-reviewers="$REV" --pr-description="$DESC"
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
+      REPO: ${{ github.repository }}
+      KIND: ${{ inputs.kind }}
+      TBV: ${{ inputs.target-bridge-version }}
+      REV: ${{ inputs.pr-reviewers }}
+      DESC: ${{ inputs.pr-description }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge == 'true' }}
     # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
