@@ -68,7 +68,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
-      upgrade-provider "$REPO" --kind="$KIND" --target-bridge-version="$TBV" --pr-reviewers="$REV" --pr-description="$DESC"
+      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
