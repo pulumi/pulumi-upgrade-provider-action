@@ -34,11 +34,12 @@ inputs:
     default: "latest"
   target-pulumi-version:
     description: |
-      Informs which version of pulumi/pkg and pulumi/sdk to link into the provider. These versions
-      inform SDK generation in particular for supported langugaes. Valid options are "latest", a
-      version like "1.2.3", or a Git commit hash reference like "cad926a2d". Leaving it empty will
-      default to not upgrading this dependency, or only upgrading it automatically when bridge
-      dependency upgrades pull it in.
+      Set the version of `pulumi/pkg` and `pulumi/sdk` to depend on for bridged providers. Currently,
+      these versions inform the linked runtime and SDK generation in all languages except Java. Valid
+      options are:
+      - "", "follow": Use the same version as pulumi-terraform-bridge
+      - A go version such as "v3.90.1"
+      - A commit SHA in pulumi/pulumi such as "ac71ebc1d34e5ccfd1a7fed61e6ff43a3160f3cb"
     required: false
     default: ""
 runs:
