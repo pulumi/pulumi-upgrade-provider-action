@@ -32,6 +32,16 @@ inputs:
       options are "latest", a version like "1.2.3", or a Git commit hash reference like "cad926a2d".
     required: false
     default: "latest"
+  target-pulumi-version:
+    description: |
+      Set the version of `pulumi/pkg` and `pulumi/sdk` to depend on for bridged providers. Currently,
+      these versions inform the linked runtime and SDK generation in all languages except Java. Valid
+      options are:
+      - "", "follow": Use the same version as pulumi-terraform-bridge
+      - A go version such as "v3.90.1"
+      - A commit SHA in pulumi/pulumi such as "ac71ebc1d34e5ccfd1a7fed61e6ff43a3160f3cb"
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -68,7 +78,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
-      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"}
+      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PUV:+--target-pulumi-version="$PUV"}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
@@ -77,6 +87,7 @@ runs:
       TBV: ${{ inputs.target-bridge-version }}
       REV: ${{ inputs.pr-reviewers }}
       DESC: ${{ inputs.pr-description }}
+      PUV: ${{ inputs.target-pulumi-version }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge == 'true' }}
     # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
