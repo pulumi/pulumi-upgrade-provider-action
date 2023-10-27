@@ -63,7 +63,7 @@ runs:
     run: git fetch --prune --unshallow --tags
     shell: bash
   - name: Install upgrade-provider
-    run: go install github.com/pulumi/upgrade-provider@iwahbe/target-pulumi-version
+    run: go install github.com/pulumi/upgrade-provider@target-pulumi-version
     shell: bash
   - name: Setup Gradle
     uses: gradle/gradle-build-action@v2
