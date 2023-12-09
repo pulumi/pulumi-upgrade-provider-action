@@ -42,6 +42,11 @@ inputs:
       - A commit SHA in pulumi/pulumi such as "ac71ebc1d34e5ccfd1a7fed61e6ff43a3160f3cb"
     required: false
     default: ""
+  target-java-version:
+    description: |
+      Explicitly set the version pf pulumi/pulumi-java to generate the java sdk with.
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -78,7 +83,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
-      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PUV:+--target-pulumi-version="$PUV"}
+      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
@@ -88,6 +93,7 @@ runs:
       REV: ${{ inputs.pr-reviewers }}
       DESC: ${{ inputs.pr-description }}
       PUV: ${{ inputs.target-pulumi-version }}
+      JV: ${{ inputs.target-java-version }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge == 'true' }}
     # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
