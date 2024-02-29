@@ -88,7 +88,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
-      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"}
+      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
