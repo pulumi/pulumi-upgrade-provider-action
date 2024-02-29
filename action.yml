@@ -26,6 +26,11 @@ inputs:
       Extra description to insert in the auto-generated pull request.
     required: false
     default: ""
+  pr-title-prefix:
+    description: |
+      Prefix to add to the title of the auto-generated pull request.
+    required: false
+    default: ""
   target-bridge-version:
     description: |
       Informs which version of pulumi-terraform-bridge to target for updating the bridge; valid
@@ -83,7 +88,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
-      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"}
+      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
@@ -92,6 +97,7 @@ runs:
       TBV: ${{ inputs.target-bridge-version }}
       REV: ${{ inputs.pr-reviewers }}
       DESC: ${{ inputs.pr-description }}
+      PREF: ${{ inputs.pr-title-prefix }}
       PUV: ${{ inputs.target-pulumi-version }}
       JV: ${{ inputs.target-java-version }}
   - name: Set PR to auto-merge
