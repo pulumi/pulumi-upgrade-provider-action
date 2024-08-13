@@ -52,9 +52,23 @@ inputs:
       Explicitly set the version pf pulumi/pulumi-java to generate the java sdk with.
     required: false
     default: ""
+  free-disk-space:
+    description: |
+      If true, the action will attempt to free up disk space by removing unnecessary packages and files.
+      To enable this, set to `true`. It will add roughly 3 minutes to the action runtime.
+    required: false
+    default: false
+
 runs:
   using: "composite"
   steps:
+  # Run as first step so we don't delete things that have just been installed
+  - name: Free Disk Space (Ubuntu)
+    if: ${{ inputs.free-disk-space == 'true' }}
+    uses: jlumbroso/free-disk-space@main
+    with:
+      tool-cache: false
+      swap-storage: false
   - name: Install Go
     uses: actions/setup-go@v3
     with:
