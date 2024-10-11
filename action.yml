@@ -86,6 +86,9 @@ runs:
     if: ${{ inputs.email != '' }}
     run: git config --global user.email '${{ inputs.email }}'
     shell: bash
+  - name: Apply patches
+    run: go run github.com/uber-go/gopatch@latest --patch patches/bridge-imports.patch -v ./...
+    shell: bash
   - name: Run upgrade-provider
     run: |
       upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"}
