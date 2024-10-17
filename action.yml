@@ -52,13 +52,22 @@ inputs:
       Explicitly set the version pf pulumi/pulumi-java to generate the java sdk with.
     required: false
     default: ""
+  go-version:
+    description: The version of golang to use
+    required: false
+    default: 1.21.x
+  go-version-file:
+    description: The path to a file that specifies which version of golang to use
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
-  - name: Install Go
+  - name: Install Go if version file not specified
+    if: ${{ inputs.go-version-file == '' }}
     uses: actions/setup-go@v3
     with:
-      go-version: 1.21.x
+      go-version: ${{ inputs.go-version }}
   - name: Install pulumictl
     uses: jaxxstorm/action-install-gh-release@v1.10.0
     with:
@@ -69,6 +78,11 @@ runs:
     uses: actions/checkout@v3
     with:
       ref: ${{ github.ref_name }}
+  - name: Install Go using version file if specified
+    if: ${{ inputs.go-version-file != '' }}
+    uses: actions/setup-go@v3
+    with:
+      go-version-file: ${{ inputs.go-version-file }}
   - name: Unshallow clone for tags
     run: git fetch --prune --unshallow --tags
     shell: bash
