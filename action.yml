@@ -52,6 +52,11 @@ inputs:
       Explicitly set the version pf pulumi/pulumi-java to generate the java sdk with.
     required: false
     default: ""
+  target-version:
+    description: |
+      Explicitly set the version of the provider to upgrade to.
+    required: false
+    default: ""
   go-version:
     description: The version of golang to use
     required: false
@@ -102,7 +107,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
-      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"}
+      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"} ${TPV:+--target-version="$TPV"}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
@@ -114,6 +119,7 @@ runs:
       PREF: ${{ inputs.pr-title-prefix }}
       PUV: ${{ inputs.target-pulumi-version }}
       JV: ${{ inputs.target-java-version }}
+      TPV: ${{ inputs.target-version }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge == 'true' }}
     # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
