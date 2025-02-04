@@ -65,6 +65,11 @@ inputs:
     description: The path to a file that specifies which version of golang to use
     required: false
     default: ""
+  allow-missing-docs:
+    description: |
+      If true, allow missing docs in the provider.
+    required: false
+    default: false
 runs:
   using: "composite"
   steps:
@@ -107,7 +112,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
-      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"} ${TPV:+--target-version="$TPV"}
+      upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"} ${TPV:+--target-version="$TPV"} ${AM:+--allow-missing-docs="$AM"}
     shell: bash
     env:
       GH_TOKEN: ${{ env.GH_TOKEN }}
@@ -120,6 +125,7 @@ runs:
       PUV: ${{ inputs.target-pulumi-version }}
       JV: ${{ inputs.target-java-version }}
       TPV: ${{ inputs.target-version }}
+      AM: ${{ inputs.allow-missing-docs }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge == 'true' }}
     # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
