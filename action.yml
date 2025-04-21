@@ -70,6 +70,11 @@ inputs:
       If true, allow missing docs in the provider.
     required: false
     default: false
+  patch-release:
+    description: |
+      If true, the provider will release a patch version with the resulting upgrade PR.
+    required: false
+    default: false
 runs:
   using: "composite"
   steps:
@@ -126,6 +131,12 @@ runs:
       JV: ${{ inputs.target-java-version }}
       TPV: ${{ inputs.target-version }}
       AM: ${{ inputs.allow-missing-docs }}
+  - name: Patch release
+    if: ${{ inputs.patch-release == 'true' }}
+    run: gh pr edit --add-label needs-release/patch
+    shell: bash
+    env:
+      GH_TOKEN: ${{ env.GH_TOKEN }}
   - name: Set PR to auto-merge
     if: ${{ inputs.automerge == 'true' }}
     # This tolerates repos that do not have auto-merge enabled.  `continue-on-error: true`
