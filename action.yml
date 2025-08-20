@@ -119,6 +119,7 @@ runs:
     shell: bash
   - name: Run upgrade-provider
     run: |
+      set -x
       upgrade-provider "$REPO" --kind="$KIND" ${TBV:+--target-bridge-version="$TBV"} ${REV:+--pr-reviewers="$REV"} ${DESC:+--pr-description="$DESC"} ${PREF:+--pr-title-prefix="$PREF"} ${PUV:+--target-pulumi-version="$PUV"} ${JV:+--java-version="$JV"} ${TPV:+--target-version="$TPV"} ${AM:+--allow-missing-docs="$AM"}
     shell: bash
     env:
